@@ -8,6 +8,7 @@ export default function Navbar({ onLoginClick }) {
         <div className="space-x-4">
           <Link to="/" className="text-gray-700 hover:text-green-600">Home</Link>
           <Link to="/campaigns" className="text-gray-700 hover:text-green-600">Explore</Link>
+          <Link to="/dashboard" className="text-gray-700 hover:text-green-600">Dashboard</Link>  {/* Added Dashboard */}
           <button
             onClick={onLoginClick}
             className="text-white bg-green-600 px-4 py-2 rounded hover:bg-green-700"
