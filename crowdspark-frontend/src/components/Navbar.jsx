@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function Navbar({ onLoginClick }) {
+function Navbar({ onLoginClick }) {
   return (
     <nav className="bg-yellow-50 shadow-md">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -19,3 +19,10 @@ export default function Navbar({ onLoginClick }) {
     </nav>
   );
 }
+
+Navbar.propTypes = {
+  onLoginClick: PropTypes.func.isRequired,
+};
+
+
+export default Navbar;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function AuthModal({ isOpen, onClose }) {
+function AuthModal({ isOpen, onClose }) {
   const [isLogin, setIsLogin] = useState(true);
 
   if (!isOpen) return null;
@@ -60,3 +60,10 @@ export default function AuthModal({ isOpen, onClose }) {
     </div>
   );
 }
+
+AuthModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+export default AuthModa;
