@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CampaignImage from '../assets/CreateCampaignPage.jpg';
+import axios from '../api/axios';
 
 export default function CreateCampaign() {
   const [form, setForm] = useState({
@@ -11,6 +12,8 @@ export default function CreateCampaign() {
     image: null,
   });
 
+  const [status, setStatus] = useState("");
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
@@ -20,10 +23,37 @@ export default function CreateCampaign() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Campaign Data:", form);
-    alert("Campaign submitted (check console)!");
+    setStatus("Submitting...");
+
+    try {
+      const formData = new FormData();
+      for (const key in form) {
+        formData.append(key, form[key]);
+      }
+
+      const response = await axios.post('/api/campaigns', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log("Campaign created:", response.data);
+      setStatus("✅ Campaign successfully submitted!");
+      // Optionally reset form
+      setForm({
+        title: "",
+        description: "",
+        goal: "",
+        deadline: "",
+        category: "",
+        image: null,
+      });
+    } catch (err) {
+      console.error("Error creating campaign:", err);
+      setStatus("❌ Failed to submit campaign.");
+    }
   };
 
   return (
@@ -32,14 +62,16 @@ export default function CreateCampaign() {
       <div
         className="absolute inset-0 bg-cover bg-center filter blur-sm scale-110"
         style={{
-          backgroundImage:
-            `url(${CampaignImage})`,
+          backgroundImage: `url(${CampaignImage})`,
         }}
       ></div>
 
       {/* Form container */}
-      <div className="relative z-10 w-full max-w-3xl p-8 bg-yellow/90 backdrop-blur-md rounded-xl shadow-xl text-center">
+      <div className="relative z-10 w-full max-w-3xl p-8 bg-yellow-50/90 backdrop-blur-md rounded-xl shadow-xl text-center">
         <h2 className="text-3xl font-bold text-green-700 mb-6">Start a New Campaign</h2>
+        
+        {status && <p className="mb-4 text-gray-800">{status}</p>}
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="text"

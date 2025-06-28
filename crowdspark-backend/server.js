@@ -11,6 +11,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+import cors from 'cors';
+app.use(cors());
+
+
 // Routes
 app.use("/api/campaigns", campaignRoutes);
 
