@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 
 const campaignSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  goal: Number,
-  deadline: Date,
-  category: String,
-  imageUrl: String,
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  goal: { type: Number, required: true },
+  deadline: { type: Date, required: true },
+  category: { type: String, required: true },
+  imageUrl: { type: String }, // Optional
 }, { timestamps: true });
 
-export default mongoose.model("Campaign", campaignSchema);
+const Campaign = mongoose.model('Campaign', campaignSchema);
+export default Campaign;

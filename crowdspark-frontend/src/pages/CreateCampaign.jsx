@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CampaignImage from '../assets/CreateCampaignPage.jpg';
+import axios from 'axios';
 
 export default function CreateCampaign() {
   const [form, setForm] = useState({
@@ -20,11 +21,34 @@ export default function CreateCampaign() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Campaign Data:", form);
-    alert("Campaign submitted (check console)!");
-  };
+  const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log("Campaign Data:", form);
+  //   alert("Campaign submitted (check console)!");
+  // };
+
+  e.preventDefault();
+
+  try {
+    const response = await axios.post(
+      'http://localhost:5000/api/campaigns',
+      {
+        title: form.title,
+        description: form.description,
+        goal: form.goal,
+        deadline: form.deadline,
+        category: form.category,
+        imageUrl: '', // Optional, for now
+      }
+    );
+
+    alert('✅ Campaign submitted!');
+    console.log('Response:', response.data);
+  } catch (error) {
+    console.error('❌ Error submitting campaign:', error);
+    alert('❌ Submission failed.');
+  }
+};
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -68,7 +92,7 @@ export default function CreateCampaign() {
             onChange={handleChange}
             placeholder="Funding Goal (USD)"
             required
-            className="w-full border rounded-md px-4 py-2 text-center"
+            className="w-full border rounded-md px-4 py-2 text-center" 
           />
 
           <input
