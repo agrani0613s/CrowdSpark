@@ -1,21 +1,36 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import connectDB from "./config/db.js";
-import campaignRoutes from "./routes/campaignRoutes.js";
+// server.js
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import authRoutes from './routes/authRoutes.js'; // use .js explicitly
+import campaignRoutes from './routes/campaignRoutes.js';
 
 dotenv.config();
-const app = express();
 
-// Middlewares
-app.use(cors({ origin: "http://localhost:5173" }));
+const app = express();
+app.use(cors({
+  origin: "http://localhost:5173", // Vite frontend port
+  credentials: true
+}));
 app.use(express.json());
 
+app.use('/api/auth', authRoutes);
+app.use('/api/campaigns', campaignRoutes);
 
-// Routes
-app.use("/api/campaigns", campaignRoutes);
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('MongoDB connected');
+    app.listen(process.env.PORT || 5000, () =>
+      console.log(`Server running on port ${process.env.PORT || 5000}`)
+    );
+  })
+  .catch(err => console.log(err));
 
-// MongoDB + Server Start
-connectDB();
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));

@@ -33,7 +33,7 @@ export default function CreateCampaign() {
         formData.append(key, form[key]);
       }
 
-      const response = await axios.post('/api/campaigns', formData, {
+      const response = await axios.post('/campaigns', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -41,7 +41,7 @@ export default function CreateCampaign() {
 
       console.log("Campaign created:", response.data);
       setStatus("✅ Campaign successfully submitted!");
-      // Optionally reset form
+
       setForm({
         title: "",
         description: "",
@@ -50,6 +50,12 @@ export default function CreateCampaign() {
         category: "",
         image: null,
       });
+
+      setTimeout(() => {
+      setStatus("");
+      window.location.href = "/profile"; // ✅ or replace with navigate("/profile") if using react-router
+      }, 2000);
+      
     } catch (err) {
       console.error("Error creating campaign:", err);
       setStatus("❌ Failed to submit campaign.");
@@ -58,7 +64,6 @@ export default function CreateCampaign() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Blurred background image */}
       <div
         className="absolute inset-0 bg-cover bg-center filter blur-sm scale-110"
         style={{
@@ -66,13 +71,16 @@ export default function CreateCampaign() {
         }}
       ></div>
 
-      {/* Form container */}
       <div className="relative z-10 w-full max-w-3xl p-8 bg-yellow-50/90 backdrop-blur-md rounded-xl shadow-xl text-center">
         <h2 className="text-3xl font-bold text-green-700 mb-6">Start a New Campaign</h2>
-        
-        {status && <p className="mb-4 text-gray-800">{status}</p>}
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+          {status && (
+          <div className={`text-center text-sm font-semibold mb-4 ${status.startsWith("✅") ? "text-green-700" : "text-red-600"}`}>
+            {status}
+          </div>
+  )}
+
+        <form className="space-y-4" onSubmit={handleSubmit} encType="multipart/form-data">
           <input
             type="text"
             name="title"
