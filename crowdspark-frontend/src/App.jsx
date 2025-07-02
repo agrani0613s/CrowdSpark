@@ -26,8 +26,23 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/campaigns" element={<AllCampaigns />} />
-        <Route path="/saved" element={<SavedCampaigns />} />
+        <Route
+  path="/campaigns"
+  element={
+    <ProtectedRoute>
+      <AllCampaigns />
+    </ProtectedRoute>
+  }
+/>
+
+        <Route
+  path="/saved"
+  element={
+    <ProtectedRoute>
+      <SavedCampaigns />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </Router>
      

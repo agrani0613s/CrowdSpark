@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -8,13 +9,21 @@ const Login = () => {
 
   const navigate = useNavigate();
 
+  // ✅ Prevent access to login if already logged in
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      navigate("/", { replace: true }); // 👈 Redirect to Home and remove Login from history
+    }
+  }, [navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     if (useMock) {
       // ✅ MOCK LOGIN: Set fake userId
       localStorage.setItem("userId", "mock-user-id-123");
-      navigate("/dashboard");
+      navigate("/", { replace: true });
     } else {
       try {
         // 🔐 REAL LOGIN: Use actual backend API
@@ -25,7 +34,7 @@ const Login = () => {
 
         const { user } = response.data;
         localStorage.setItem("userId", user._id);
-        navigate("/dashboard");
+        navigate("/", { replace: true });
       } catch (error) {
         alert("Login failed. Please check credentials.");
         console.error(error);
@@ -82,11 +91,11 @@ const Login = () => {
         </button>
 
         <p className="text-sm text-center mt-4 text-gray-600">
-  Don't have an account?{" "}
-  <a href="/signup" className="text-teal-500 font-medium hover:underline">
-    Sign Up
-  </a>
-</p>
+          Don't have an account?{" "}
+          <a href="/signup" className="text-teal-500 font-medium hover:underline">
+            Sign Up
+          </a>
+        </p>
       </form>
     </div>
   );
