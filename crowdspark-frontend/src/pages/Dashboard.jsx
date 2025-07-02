@@ -1,120 +1,116 @@
 // src/pages/Dashboard.jsx
-import React from 'react';
+import React, { useState, useEffect } from "react";
 
-const statsData = [
-  { id: 1, title: 'Events Created', value: 12 },
-  { id: 2, title: 'Donations Made', value: 54 },
-  { id: 3, title: 'Volunteers Joined', value: 30 },
-  { id: 4, title: 'Active Campaigns', value: 5 },
-];
-
-const containerStyle = {
-  maxWidth: '800px',
-  margin: '0 auto',
-  padding: '20px',
-  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-  color: '#333',
-};
-
-const headerStyle = {
-  textAlign: 'center',
-  marginBottom: '40px',
-};
-
-const titleStyle = {
-  fontSize: '2.5rem',
-  fontWeight: '700',
-  color: '#008080',
-  marginBottom: '10px',
-};
-
-const subtitleStyle = {
-  fontSize: '1.1rem',
-  color: '#555',
-};
-
-const statsContainerStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap',
-  gap: '20px',
-  marginBottom: '40px',
-};
-
-const statCardStyle = {
-  flex: '1 1 180px',
-  backgroundColor: '#b2d8d8',
-  borderRadius: '8px',
-  padding: '20px',
-  textAlign: 'center',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-  cursor: 'default',
-  transition: 'background-color 0.3s ease',
-};
-
-const statValueStyle = {
-  fontSize: '2.5rem',
-  fontWeight: '800',
-  color: '#006666',
-  marginBottom: '5px',
-};
-
-const statTitleStyle = {
-  fontWeight: '600',
-  color: '#004d4d',
-};
-
-const sectionTitleStyle = {
-  fontSize: '1.8rem',
-  fontWeight: '600',
-  marginBottom: '15px',
-  color: '#222',
-};
-
-const listStyle = {
-  listStyleType: 'disc',
-  paddingLeft: '20px',
-  color: '#444',
-  fontSize: '1.1rem',
-  lineHeight: '1.6',
+const mockUser = {
+  name: "Neha Sharma",
+  email: "neha@example.com",
+  stats: {
+    events: 12,
+    donations: 54,
+    volunteers: 30,
+    campaigns: 5,
+  },
+  activity: [
+    { type: "📢", text: "Created campaign: Save the Oceans" },
+    { type: "💰", text: "Donated ₹500 to Education For All" },
+    { type: "🌱", text: "Volunteered for Tree Plantation" },
+  ],
+  campaigns: [
+    {
+      title: "Save the Himalayas",
+      description: "Reforestation and cleanup drive.",
+    },
+    {
+      title: "Educate Every Girl",
+      description: "Raising funds for school supplies.",
+    },
+    {
+      title: "Flood Relief India",
+      description: "Food and shelter for flood victims.",
+    },
+  ],
 };
 
 const Dashboard = () => {
+  const [user, setUser] = useState(null);
+
+  // Simulate API call
+  useEffect(() => {
+    // Simulate fetch delay
+    setTimeout(() => {
+      setUser(mockUser);
+    }, 500);
+  }, []);
+
+  if (!user) {
+    return <div className="text-center p-10 text-gray-500">Loading...</div>;
+  }
+
   return (
-    <div style={containerStyle}>
-      <header style={headerStyle}>
-        <h1 style={titleStyle}>Welcome to CrowdSpark!</h1>
-        <p style={subtitleStyle}>
-          CrowdSpark connects communities through impactful events and donations.
-          Explore, contribute, and make a difference.
+    <div className="max-w-5xl mx-auto p-6">
+      <header className="text-center mb-10">
+        <h1 className="text-3xl font-bold text-green-700 mb-1">
+          Welcome, {user.name}!
+        </h1>
+        <p className="text-sm text-gray-600">{user.email}</p>
+        <p className="text-gray-700 mt-2">
+          Glad to see you back on <span className="font-semibold">CrowdSpark 💡</span>
         </p>
       </header>
 
-      <section style={statsContainerStyle}>
-        {statsData.map(({ id, title, value }) => (
-          <div
-            key={id}
-            style={statCardStyle}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#99cccc')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#b2d8d8')}
-          >
-            <h3 style={statValueStyle}>{value}</h3>
-            <p style={statTitleStyle}>{title}</p>
-          </div>
-        ))}
+      {/* Stats */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <StatCard label="Events Created" value={user.stats.events} />
+        <StatCard label="Donations Made" value={user.stats.donations} />
+        <StatCard label="Volunteers Joined" value={user.stats.volunteers} />
+        <StatCard label="Active Campaigns" value={user.stats.campaigns} />
       </section>
 
+      {/* Recent Activity */}
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-3">Recent Activity</h2>
+        <ul className="list-disc list-inside text-gray-700 space-y-1">
+          {user.activity.map((item, i) => (
+            <li key={i}>
+              <span className="mr-2">{item.type}</span>
+              {item.text}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* My Campaigns */}
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-3">My Campaigns</h2>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {user.campaigns.map((camp, index) => (
+            <div key={index} className="bg-green-50 p-4 rounded-xl shadow-sm">
+              <h3 className="text-green-700 font-bold text-lg">{camp.title}</h3>
+              <p className="text-gray-600 mt-1">{camp.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Tips */}
       <section>
-        <h2 style={sectionTitleStyle}>What You Can Do Here:</h2>
-        <ul style={listStyle}>
-          <li>Discover local events and initiatives</li>
-          <li>Track your donations and contributions</li>
-          <li>Connect with organizers and volunteers</li>
-          <li>Stay updated with community news</li>
+        <h2 className="text-xl font-semibold mb-3">What You Can Do Here:</h2>
+        <ul className="space-y-2 text-gray-700">
+          <li>🔍 Discover local events and initiatives</li>
+          <li>📈 Track your donations and contributions</li>
+          <li>🤝 Connect with organizers and volunteers</li>
+          <li>📰 Stay updated with community news</li>
         </ul>
       </section>
     </div>
   );
 };
+
+const StatCard = ({ label, value }) => (
+  <div className="bg-teal-100 rounded-xl shadow-sm p-4 text-center">
+    <div className="text-2xl font-bold text-green-700">{value}</div>
+    <div className="text-sm font-medium text-gray-700 mt-1">{label}</div>
+  </div>
+);
 
 export default Dashboard;
