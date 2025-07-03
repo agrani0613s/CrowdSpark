@@ -7,6 +7,10 @@ import Dashboard from './pages/Dashboard';
 import AllCampaigns from './pages/AllCampaigns';
 import SavedCampaigns from './pages/SavedCampaigns';
 import ProtectedRoute from './components/ProtectedRoute';
+import About from './pages/About';
+import CategoryPage from './pages/CategoryPage';
+
+
 import { Toaster } from "react-hot-toast";
 
 export default function App() {
@@ -26,6 +30,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/about" element={<About />} />
+        <Route path="/category/:categoryName" element={<CategoryPage />} />
+
         <Route
   path="/campaigns"
   element={
