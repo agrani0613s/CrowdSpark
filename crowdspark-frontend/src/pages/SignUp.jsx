@@ -2,95 +2,86 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [useMock, setUseMock] = useState(true); // ✅ Toggle for mock signup
+const Signup = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    if (useMock) {
-      // ✅ MOCK SIGNUP: Set fake userId
-      localStorage.setItem("userId", "mock-user-id-123");
-      navigate("/dashboard"); // or "/"
-    } else {
-      try {
-        const response = await axios.post("http://localhost:5000/api/auth/signup", {
-          email,
-          password,
-        });
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
 
-        const { user } = response.data;
-
-        // ✅ Automatically log in after signup
-        localStorage.setItem("userId", user._id);
-        navigate("/dashboard"); // or "/"
-      } catch (err) {
-        alert("Signup failed. Please try again.");
-        console.error(err);
+      if (res.data && res.data.user) {
+        localStorage.setItem("userId", res.data.user._id);
+        navigate("/dashboard");
+      } else {
+        setError("Signup failed.");
       }
+    } catch (err) {
+      console.error(err);
+      setError("User already exists or server error.");
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSignup}
         className="bg-white p-8 rounded shadow-md w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold text-center text-green-600 mb-6">
-          Sign Up for CrowdSpark
-        </h2>
+        <h2 className="text-2xl font-bold text-center mb-6 text-teal-600">Sign Up</h2>
 
-        {/* 🟢 Toggle for Mock Signup */}
-        <div className="mb-4 flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700">
-            Use Mock Signup
-          </label>
-          <input
-            type="checkbox"
-            checked={useMock}
-            onChange={() => setUseMock(!useMock)}
-            className="h-4 w-4"
-          />
-        </div>
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-        <label className="block mb-2 text-sm font-medium">Email</label>
+        <label className="block mb-1 font-medium">Name</label>
         <input
-          type="email"
+          type="text"
+          name="name"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.name}
+          onChange={handleChange}
           className="w-full px-4 py-2 mb-4 border rounded"
         />
 
-        <label className="block mb-2 text-sm font-medium">Password</label>
+        <label className="block mb-1 font-medium">Email</label>
+        <input
+          type="email"
+          name="email"
+          required
+          value={formData.email}
+          onChange={handleChange}
+          className="w-full px-4 py-2 mb-4 border rounded"
+        />
+
+        <label className="block mb-1 font-medium">Password</label>
         <input
           type="password"
+          name="password"
           required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={handleChange}
           className="w-full px-4 py-2 mb-6 border rounded"
         />
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+          className="w-full bg-teal-600 text-white py-2 rounded hover:bg-teal-700"
         >
           Sign Up
         </button>
-
-        <p className="text-sm text-center mt-4 text-gray-600">
-          Already have an account?{" "}
-          <a href="/login" className="text-teal-500 font-medium hover:underline">
-            Login
-          </a>
-        </p>
       </form>
     </div>
   );
 };
 
-export default SignUp;
+export default Signup;
