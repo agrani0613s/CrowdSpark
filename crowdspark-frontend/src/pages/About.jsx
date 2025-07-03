@@ -1,4 +1,6 @@
 // About.jsx
+import Features from "../components/Features";
+
 export default function About() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
@@ -15,6 +17,9 @@ export default function About() {
       <h2 className="text-xl font-semibold mt-8 mb-2">Stories from Creators</h2>
       <p className="mb-2">“CrowdSpark helped me raise ₹5 lakh for building solar lamps in rural schools.”</p>
       <p>“Thanks to the platform, our women-led startup gained early traction and funds.”</p>
+
+      <Features />
+      
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import Features from "../components/Features";
+// import Features from "../components/Features";
 import Footer from "../components/Footer";
 import CampaignCarousel from "../components/CampaignCarousel";
 import ContactSection from "../components/ContactSection";
@@ -98,7 +98,7 @@ export default function Home() {
     <>
       <Navbar onLoginClick={() => setShowAuth(true)} />
       <Hero onLoginClick={() => setShowAuth(true)} />
-      <Features />
+      {/* <Features /> */}
 
       {/* Scrollable Sections */}
       <CampaignCarousel title="🔥 Top Fundraisers" campaigns={topCampaigns} />

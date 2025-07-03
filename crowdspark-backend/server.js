@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 // import connectDB from "./config/db.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
 import authRoutes from './routes/authRoutes.js'; // use .js explicitly
@@ -24,7 +25,9 @@ app.use("/api/campaigns", campaignRoutes);
 app.use('/api', geminiRoutes);
 
 // MongoDB + Server Start
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { 
+  // useNewUrlParser: true, useUnifiedTopology: true 
+})
   .then(() => {
     console.log('MongoDB connected');
     app.listen(process.env.PORT || 5000, () =>
