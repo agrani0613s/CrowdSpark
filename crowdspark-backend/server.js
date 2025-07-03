@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 // import connectDB from "./config/db.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
 import mongoose from 'mongoose';
+// import openaiRoutes from './routes/openaiRoutes.js';
+import geminiRoutes from './routes/geminiRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -16,6 +18,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/campaigns", campaignRoutes);
+//gemini 
+app.use('/api', geminiRoutes);
 
 // MongoDB + Server Start
 mongoose.connect(process.env.MONGO_URI, {

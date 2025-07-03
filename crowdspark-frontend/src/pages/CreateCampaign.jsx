@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CampaignImage from '../assets/CreateCampaignPage.jpg';
-// import axios from '../api/axios';
-import axios from 'axios';
+import axios from '../api/axios';
+
 
 export default function CreateCampaign() {
   const [form, setForm] = useState({
@@ -24,6 +24,28 @@ export default function CreateCampaign() {
     }
   };
 
+  const handleGenerateDescription = async () => {
+  if (!form.title) {
+    alert("Please enter a campaign title first.");
+    return;
+  }
+
+  setStatus("🔄 Generating description...");
+
+  try {
+    const res = await axios.post('/api/generate-description', {
+      title: form.title,
+    });
+
+    setForm({ ...form, description: res.data.description });
+    setStatus("✅ Description generated!");
+  } catch (err) {
+    console.error(err);
+    setStatus("❌ Failed to generate description.");
+  }
+  };
+
+
   const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   console.log("Campaign Data:", form);
@@ -31,6 +53,7 @@ export default function CreateCampaign() {
   // };
 
   e.preventDefault();
+  setStatus("Submitted");
 
   try {
     const response = await axios.post(
@@ -89,6 +112,14 @@ export default function CreateCampaign() {
             required
             className="w-full border rounded-md px-4 py-2 text-center"
           />
+
+          <button
+             type="button"
+             onClick={handleGenerateDescription}
+             className="bg-green-600 text-white px-5 py-1 rounded-md hover:bg-purple-700 w-half"
+          > 
+            ✨ Generate with AI
+          </button>
 
           <input
             type="number"
