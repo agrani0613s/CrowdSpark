@@ -1,15 +1,10 @@
+import { useContext } from "react";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext.jsx";
 
-export default function Navbar({ onLoginClick }) {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("userId"); // 🔐 clear login
-    navigate("/login"); // 🔁 redirect
-  };
-
-  const isLoggedIn = !!localStorage.getItem("userId");
+function Navbar({ onLoginClick }) {
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <nav className="bg-yellow-50 shadow-md">
@@ -17,10 +12,10 @@ export default function Navbar({ onLoginClick }) {
         {/* Logo */}
         <h1 className="text-2xl font-bold text-green-600">CrowdSpark</h1>
 
-        {/* Center actions */}
         <div className="flex items-center space-x-6">
           {/* Explore Button */}
           <button
+            type="button"
             onClick={() => window.dispatchEvent(new Event("toggleExplore"))}
             className="text-gray-700 hover:text-green-600 font-medium"
           >
@@ -44,23 +39,30 @@ export default function Navbar({ onLoginClick }) {
           <Link to="/about" className="text-gray-700 hover:text-green-600">
             About
           </Link>
-          <Link to="/dashboard" className="text-gray-700 hover:text-green-600">
-            Dashboard
-          </Link>
-          <Link to="/saved" className="text-gray-700 hover:text-green-600">
-            Saved
-          </Link>
 
-          {/* Login / Logout Button */}
-          {isLoggedIn ? (
+          {user && (
+            <Link to="/profile" className="text-gray-700 hover:text-green-600">
+              Profile
+            </Link>
+          )}
+
+          {user?.isAdmin && (
+            <Link to="/admin" className="text-gray-700 hover:text-green-600">
+              Admin
+            </Link>
+          )}
+
+          {user ? (
             <button
-              onClick={handleLogout}
+              type="button"
+              onClick={logout}
               className="text-white bg-red-500 px-4 py-2 rounded hover:bg-red-600"
             >
               Logout
             </button>
           ) : (
             <button
+              type="button"
               onClick={onLoginClick}
               className="text-white bg-green-600 px-4 py-2 rounded hover:bg-green-700"
             >
@@ -76,3 +78,5 @@ export default function Navbar({ onLoginClick }) {
 Navbar.propTypes = {
   onLoginClick: PropTypes.func.isRequired,
 };
+
+export default Navbar;

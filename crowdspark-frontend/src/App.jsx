@@ -1,8 +1,12 @@
-import Signup from "./pages/SignUp";
-import Login from './pages/Login';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from "react-hot-toast";
 import Home from './pages/Home';
+import PrivateRoute from "./components/PrivateRoute";
 import CreateCampaign from "./pages/CreateCampaign";
+
+import AdminDashboard from "./pages/AdminDashboard";
+import Profile from "./pages/profile";
+
 import Dashboard from './pages/Dashboard';
 import AllCampaigns from './pages/AllCampaigns';
 import SavedCampaigns from './pages/SavedCampaigns';
@@ -11,17 +15,33 @@ import About from './pages/About';
 import CategoryPage from './pages/CategoryPage';
 
 
-import { Toaster } from "react-hot-toast";
-
 export default function App() {
   return (
     <Router>
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/create" element={<CreateCampaign />} />
+        {/* Protected Routes */}
+        <Route 
+          path="/profile" 
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          } 
+        />
+
+        <Route 
+          path="/create" 
+          element={
+            <PrivateRoute>
+              <CreateCampaign />
+            </PrivateRoute>
+          } 
+        />
+{/* 
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup />} /> */}
         <Route
           path="/dashboard"
           element={
@@ -33,7 +53,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/category/:categoryName" element={<CategoryPage />} />
 
-        <Route
+<Route
   path="/campaigns"
   element={
     <ProtectedRoute>
@@ -50,6 +70,16 @@ export default function App() {
     </ProtectedRoute>
   }
 />
+
+        <Route 
+          path="/admin" 
+          element={
+            <PrivateRoute adminOnly={true}>
+              <AdminDashboard />
+            </PrivateRoute>
+          } 
+        />
+
       </Routes>
     </Router>
      
