@@ -17,7 +17,20 @@ const userSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false,
-  }
+  },
+  phone: String,
+  occupation: String,
+  profilePic: { 
+    type: String, 
+    default: '' 
+  },
+  donations: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Donation' 
+  }],
+  fundraisers: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Campaign' }]
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

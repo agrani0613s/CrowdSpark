@@ -7,6 +7,8 @@ import campaignRoutes from "./routes/campaignRoutes.js";
 import authRoutes from './routes/authRoutes.js'; // use .js explicitly
 // import openaiRoutes from './routes/openaiRoutes.js';
 import geminiRoutes from './routes/geminiRoutes.js';
+import donationRoutes from "./routes/donations.js";
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -24,6 +26,13 @@ app.use("/api/campaigns", campaignRoutes);
 //gemini 
 app.use('/api', geminiRoutes);
 
+
+// Serve profile pics
+app.use('/api/users', userRoutes);
+app.use('/uploads', express.static('uploads')); 
+
+app.use("/api/donations", donationRoutes);
+
 // MongoDB + Server Start
 mongoose.connect(process.env.MONGO_URI, { 
   // useNewUrlParser: true, useUnifiedTopology: true 
@@ -35,6 +44,7 @@ mongoose.connect(process.env.MONGO_URI, {
     );
   })
   .catch(err => console.log(err));
+
 
 import path from 'path';
 import { fileURLToPath } from 'url';
