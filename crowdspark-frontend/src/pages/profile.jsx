@@ -68,6 +68,34 @@ function Profile() {
     window.location.href = "/";
   };
 
+  const [preferences, setPreferences] = useState([]);
+  const [suggestedCampaigns, setSuggestedCampaigns] = useState([]);
+
+  const categories = ['tech', 'art', 'social', 'education'];
+
+  const handleCheckboxChange = (category) => {
+    setPreferences(prev =>
+      prev.includes(category)
+        ? prev.filter(item => item !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleSetPreferences = async () => {
+    if (preferences.length === 0) {
+      alert('Please select at least one category');
+      return;
+    }
+
+    try {
+      const res = await axios.post('/suggested-campaigns', { preferences });
+      setSuggestedCampaigns(res.data);
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+      alert('Failed to load suggestions');
+    }
+  };
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       {/* Profile Section */}
@@ -141,6 +169,61 @@ function Profile() {
           ))}
         </div>
       )}
+
+      {/* suggested campaigns */}
+
+      <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Set Your Preferences</h2>
+
+      <div className="flex gap-4 mb-4">
+        {categories.map(cat => (
+          <label key={cat} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={preferences.includes(cat)}
+              onChange={() => handleCheckboxChange(cat)}
+            />
+            {cat}
+          </label>
+        ))}
+      </div>
+
+      <button
+        onClick={handleSetPreferences}
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        Set Preferences
+      </button>
+
+      <div className="mt-8">
+        <h3 className="text-xl font-semibold mb-3">Suggested Campaigns:</h3>
+        {suggestedCampaigns.length === 0 ? ( <p>No suggestions yet.</p> ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          {suggestedCampaigns.map((campaign) => (
+            <div
+              key={campaign._id}
+              className="border rounded-md p-4 shadow hover:shadow-lg transition"
+            >
+              <h4 className="font-bold text-lg">{campaign.title}</h4>
+              <p className="text-sm text-gray-600">{campaign.category}</p>
+              <img
+                src={campaign.image}
+                alt={campaign.title}
+                className="w-full h-40 object-cover rounded mt-2"
+              />
+              <p className="mt-2 text-gray-700">{campaign.description}</p>
+              <p className="mt-1 text-sm text-gray-500">
+                Goal: ₹{campaign.goal}
+              </p>
+              <p className="text-sm text-gray-500">
+                Deadline: {new Date(campaign.deadline).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+    </div>
 
       {/* My Donations */}
       <h3 className="mt-10 text-xl font-semibold">My Donations</h3>

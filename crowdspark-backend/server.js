@@ -5,10 +5,12 @@ import mongoose from "mongoose";
 // import connectDB from "./config/db.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
 import authRoutes from './routes/authRoutes.js'; // use .js explicitly
-// import openaiRoutes from './routes/openaiRoutes.js';
+// import gemini from './routes/geminiRoutes.js';
 import geminiRoutes from './routes/geminiRoutes.js';
 import donationRoutes from "./routes/donations.js";
 import userRoutes from './routes/userRoutes.js';
+// import suggestionRoutes from './routes/suggestionRoutes.js'
+import suggestionRoutes from './routes/suggestionRoutes.js';
 
 dotenv.config();
 
@@ -25,7 +27,8 @@ app.use("/api/campaigns", campaignRoutes);
 
 //gemini 
 app.use('/api', geminiRoutes);
-
+//suggested campaign
+app.use('/api', suggestionRoutes);
 
 // Serve profile pics
 app.use('/api/users', userRoutes);

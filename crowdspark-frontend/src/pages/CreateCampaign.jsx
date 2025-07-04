@@ -33,7 +33,7 @@ export default function CreateCampaign() {
   setStatus("🔄 Generating description...");
 
   try {
-    const res = await axios.post('/api/generate-description', {
+    const res = await axios.post('/generate-description', {
       title: form.title,
     });
 
@@ -56,7 +56,7 @@ export default function CreateCampaign() {
         formData.append(key, form[key]);
       }
 
-      const response = await axios.post('/api/campaigns', formData, {
+      const response = await axios.post('/campaigns', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
