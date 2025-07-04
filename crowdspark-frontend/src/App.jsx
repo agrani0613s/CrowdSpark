@@ -4,15 +4,17 @@ import PrivateRoute from "./components/PrivateRoute";
 import CreateCampaign from "./pages/CreateCampaign";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/profile";
+//import Navbar from "./components/Navbar";
+
 
 export default function App() {
   return (
     <Router>
-
+      
       {/* Route declarations */}
       <Routes>
         <Route path="/" element={<Home />} />
-
+        
         {/* Protected Routes */}
         <Route 
           path="/profile" 
@@ -22,7 +24,6 @@ export default function App() {
             </PrivateRoute>
           } 
         />
-
         <Route 
           path="/create" 
           element={
