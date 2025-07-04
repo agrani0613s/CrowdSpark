@@ -1,10 +1,22 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { AuthContext } from "../context/AuthContext.jsx";
+// import { AuthContext } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar({ onLoginClick }) {
-  const { user, logout } = useContext(AuthContext);
+  // const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth();
+  // const navigate = useNavigate();
+
+  // const handleStartCampaign = () => {
+  //   if (user) {
+  //     navigate("/create"); // ✅ Go to CreateCampaign if logged in
+  //   } else {
+  //     alert("⚠️ Please log in to start a campaign.");
+  //     onLoginClick(); // ✅ Opens login/signup modal
+  //   }
+  // };
 
   return (
     <nav className="bg-yellow-50 shadow-md">

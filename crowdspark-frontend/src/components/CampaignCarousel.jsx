@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 
 export default function CampaignCarousel({ title, campaigns }) {
+  const placeholderImage = "\SCENERY.png";
   return (
     <section className="my-10 px-6">
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
@@ -11,8 +12,9 @@ export default function CampaignCarousel({ title, campaigns }) {
           return (
             <div key={idx} className="min-w-[300px] bg-white rounded-lg shadow-md p-4 flex-shrink-0">
               <img
-                src={campaign.image}
+                src={campaign.image || placeholderImage}
                 alt={campaign.title}
+                onError={(e) => { e.target.src = placeholderImage; }}
                 className="h-40 w-full object-cover rounded"
               />
               <h3 className="text-lg font-semibold mt-2">{campaign.title}</h3>

@@ -1,5 +1,6 @@
 // src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 
 const mockUser = {
   name: "Neha Sharma",
@@ -112,5 +113,10 @@ const StatCard = ({ label, value }) => (
     <div className="text-sm font-medium text-gray-700 mt-1">{label}</div>
   </div>
 );
+
+StatCard.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default Dashboard;

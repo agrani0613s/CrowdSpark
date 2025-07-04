@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 export default function CampaignCard({ campaign }) {
   const [isSaved, setIsSaved] = useState(false);
@@ -36,3 +37,15 @@ export default function CampaignCard({ campaign }) {
     </div>
   );
 }
+
+// ✅ PropTypes validation
+CampaignCard.propTypes = {
+  campaign: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    image: PropTypes.string, // optional if you don’t use it here
+    goal: PropTypes.number,  // optional if not used here
+    raised: PropTypes.number // optional if not used here
+  }).isRequired,
+};
