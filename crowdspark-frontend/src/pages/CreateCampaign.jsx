@@ -136,7 +136,7 @@ export default function CreateCampaign() {
             name="goal"
             value={form.goal}
             onChange={handleChange}
-            placeholder="Funding Goal (USD)"
+            placeholder="Funding Goal (INR)"
             required
             className="w-full border rounded-md px-4 py-2 text-center" 
           />
@@ -158,10 +158,14 @@ export default function CreateCampaign() {
             className="w-full border rounded-md px-4 py-2 text-center"
           >
             <option value="">Select a Category</option>
-            <option value="tech">Tech</option>
+            <option value="health">Health</option>
+            <option value="education">Education</option>
+            <option value="environment">Environment</option>
+            <option value="tech">Technology</option>
             <option value="art">Art</option>
             <option value="social">Social Impact</option>
-            <option value="education">Education</option>
+            <option value="others">Other</option>
+            
           </select>
 
           <input

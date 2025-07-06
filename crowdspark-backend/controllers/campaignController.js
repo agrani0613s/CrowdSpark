@@ -24,8 +24,6 @@ export const createCampaign = async (req, res) => {
 };
 
 
-
-
 // GET /api/campaigns?createdBy=userId
 export const getAllCampaigns = async (req, res) => {
   try {
@@ -38,5 +36,24 @@ export const getAllCampaigns = async (req, res) => {
     res.json(campaigns);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ Get All Campaigns (optionally filter by category)
+export const getCampaigns = async (req, res) => {
+  try {
+    const query = {};
+
+    // 🔥 Add category filter if query param exists
+    if (req.query.category) {
+      // query.category = { $regex: new RegExp(`^${req.query.category}$`, "i") };
+      query.category = { $regex: `^${req.query.trim()}$`, $options: "i" };
+    }
+
+    const campaigns = await Campaign.find(query).sort({ createdAt: -1 });
+    res.json(campaigns);
+  } catch (err) {
+    console.error("❌ Error fetching campaigns:", err);
+    res.status(500).json({ error: "Server error" });
   }
 };
