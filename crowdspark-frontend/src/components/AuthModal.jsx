@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 function AuthModal({ isOpen, onClose }) {
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState("");
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", password: "" });
 
   if (!isOpen) return null;
 
@@ -55,6 +55,7 @@ function AuthModal({ isOpen, onClose }) {
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           {!isLogin && (
+            <>
             <input
               type="text"
               name="name"
@@ -64,6 +65,16 @@ function AuthModal({ isOpen, onClose }) {
               required
               onChange={handleChange}
             />
+            <input
+                type="text"
+                name="phone"
+                placeholder="Phone (optional)"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+              />
+              </>
+            
           )}
 
           <input

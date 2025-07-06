@@ -50,7 +50,7 @@
 
 
 import express from "express";
-import { createCampaign, getCampaigns } from "../controllers/campaignController.js";
+import { createCampaign, getMyCampaigns } from "../controllers/campaignController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/upload.js";
 import Campaign from "../models/Campaign.js";
@@ -84,16 +84,46 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Get campaigns by user
-router.get("/user/:userId", async (req, res) => {
+// // ✅ Get campaigns by user
+// router.get("/user/:userId", async (req, res) => {
+//   try {
+//     const userCampaigns = await Campaign.find({ createdBy: req.params.userId }).sort({ createdAt: -1 });
+//     res.json(userCampaigns);
+//   } catch (err) {
+//     console.error("❌ Error fetching user campaigns:", err);
+//     res.status(500).json({ message: "Error fetching user campaigns" });
+//   }
+// });
+
+// GET /api/campaigns/my - Get campaigns created by logged-in user
+router.get("/my", protect, async (req, res) => {
   try {
-    const userCampaigns = await Campaign.find({ createdBy: req.params.userId }).sort({ createdAt: -1 });
-    res.json(userCampaigns);
+    const campaigns = await Campaign.find({ createdBy: req.user._id });
+    res.status(200).json(campaigns);
   } catch (err) {
-    console.error("❌ Error fetching user campaigns:", err);
-    res.status(500).json({ message: "Error fetching user campaigns" });
+    console.error("Error fetching user campaigns", err);
+    res.status(500).json({ message: "Server Error" });
   }
 });
+
+// GET /api/campaigns
+router.get("/", async (req, res) => {
+  try {
+    const { createdBy } = req.query;
+
+    let query = {};
+    if (createdBy) {
+      query.createdBy = createdBy;
+    }
+
+    const campaigns = await Campaign.find(query);
+    res.status(200).json(campaigns);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 
 export default router;

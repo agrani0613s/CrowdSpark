@@ -6,24 +6,48 @@ function Profile() {
   const [campaigns, setCampaigns] = useState([]);
   const [donations, setDonations] = useState([]);
   const [profilePic, setProfilePic] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setUser(storedUser);
 
     if (storedUser?._id) {
-      fetchUserCampaigns(storedUser._id);
+      fetchUserCampaigns();
       fetchUserProfile(storedUser._id);
       fetchUserDonations();
     }
   }, []);
 
-  const fetchUserCampaigns = async (userId) => {
+  // if (storedUser) {
+  //     setFormData({
+  //       name: storedUser.name || "",
+  //       email: storedUser.email || "",
+  //       phone: storedUser.phone || "",
+  //     });
+  //     fetchUserCampaigns(storedUser._id);
+  //     fetchUserDonations();
+  //   }
+  // }, []);
+
+  // ✅ Fetch only campaigns created by logged-in user
+  const fetchUserCampaigns = async () => {
     try {
-      const res = await axios.get(`/campaigns?createdBy=${userId}`);
+      // const token = JSON.parse(localStorage.getItem("token"));
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get("/campaigns/my", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setCampaigns(res.data);
     } catch (err) {
-      console.error("Error fetching campaigns", err);
+      console.error("Error fetching user campaigns", err);
     }
   };
 
@@ -63,6 +87,44 @@ function Profile() {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!formData.name || !formData.email) {
+      alert("Name and Email cannot be empty");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await axios.put(
+        "/auth/update",
+        { ...formData },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      alert("Profile updated successfully!");
+      setEditMode(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert("Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const handleLogout = () => {
     localStorage.clear();
     window.location.href = "/";
@@ -71,7 +133,7 @@ function Profile() {
   const [preferences, setPreferences] = useState([]);
   const [suggestedCampaigns, setSuggestedCampaigns] = useState([]);
 
-  const categories = ['tech', 'art', 'social', 'education'];
+  const categories = ['technology', 'art', 'social impact', 'education', 'health', 'environment', 'others'];
 
   const handleCheckboxChange = (category) => {
     setPreferences(prev =>
@@ -114,15 +176,15 @@ function Profile() {
             title="Change Profile Picture"
           />
         </div>
-        <div>
+        {/* <div>
           <h2 className="text-3xl font-bold">Welcome, {user?.name}</h2>
           <p className="text-gray-600 mt-1">📧 {user?.email}</p>
           <p className="text-gray-600">
             📱 {user?.phone || "Phone not added"}
           </p>
-          <p className="text-gray-600">
+           <p className="text-gray-600">
             💼 {user?.occupation || "Occupation not added"}
-          </p>
+          </p> 
           <p className="text-gray-600">
             Role: {user?.isAdmin ? "Admin" : "User"}
           </p>
@@ -135,40 +197,108 @@ function Profile() {
           >
             Logout
           </button>
+        </div> */}
+        <div>
+          {editMode ? (
+            <>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Name"
+                className="block border p-2 rounded mb-2 w-72"
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Email"
+                className="block border p-2 rounded mb-2 w-72"
+              />
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="Phone"
+                className="block border p-2 rounded mb-2 w-72"
+              />
+              <button
+                onClick={handleUpdateProfile}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Save Changes"}
+              </button>
+              <button
+                onClick={() => setEditMode(false)}
+                className="ml-2 bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="text-3xl font-bold">{user?.name}</h2>
+              <p className="text-gray-600 mt-1">📧 {user?.email}</p>
+              <p className="text-gray-600">
+                📱 {user?.phone || "Phone not added"}
+              </p>
+              <p className="text-gray-600">
+                Role: {user?.isAdmin ? "Admin" : "User"}
+              </p>
+              <button
+                onClick={() => setEditMode(true)}
+                className="bg-green-600 text-white px-4 py-2 mt-4 rounded hover:bg-green-700"
+              >
+                Edit Profile
+              </button>
+              <button
+                onClick={handleLogout}
+                className="ml-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       </div>
+      
 
       {/* My Fundraisers */}
       <h3 className="mt-8 text-xl font-semibold">Your Campaigns:</h3>
-      {campaigns.length === 0 ? (
-        <p className="text-gray-500 mt-2">
-          You haven’t posted any campaigns yet.
+{campaigns.length === 0 ? (
+  <p className="text-gray-500 mt-2">
+    You haven’t posted any campaigns yet.
+  </p>
+) : (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+    {campaigns.map((campaign) => (
+      <div
+        key={campaign._id}
+        className="border rounded-md p-4 shadow hover:shadow-lg transition"
+      >
+        <h4 className="font-bold text-lg">{campaign.title}</h4>
+        <p className="text-sm text-gray-600">{campaign.category}</p>
+        <img
+          src={campaign.image || "/default-campaign.jpeg"}
+          alt={campaign.title}
+          className="w-full h-40 object-cover rounded mt-2"
+        />
+        <p className="mt-2 text-gray-700">{campaign.description}</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Goal: ₹{campaign.goal}
         </p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-          {campaigns.map((campaign) => (
-            <div
-              key={campaign._id}
-              className="border rounded-md p-4 shadow hover:shadow-lg transition"
-            >
-              <h4 className="font-bold text-lg">{campaign.title}</h4>
-              <p className="text-sm text-gray-600">{campaign.category}</p>
-              <img
-                src={campaign.image}
-                alt={campaign.title}
-                className="w-full h-40 object-cover rounded mt-2"
-              />
-              <p className="mt-2 text-gray-700">{campaign.description}</p>
-              <p className="mt-1 text-sm text-gray-500">
-                Goal: ₹{campaign.goal}
-              </p>
-              <p className="text-sm text-gray-500">
-                Deadline: {new Date(campaign.deadline).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+        <p className="text-sm text-gray-500">
+          Deadline: {new Date(campaign.deadline).toLocaleDateString()}
+        </p>
+      </div>
+    ))}
+  </div>
+)}
+
 
       {/* suggested campaigns */}
 

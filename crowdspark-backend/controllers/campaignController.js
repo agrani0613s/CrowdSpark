@@ -25,19 +25,16 @@ export const createCampaign = async (req, res) => {
 
 
 // GET /api/campaigns?createdBy=userId
-export const getAllCampaigns = async (req, res) => {
+export const getMyCampaigns = async (req, res) => {
   try {
-    const query = {};
-    if (req.query.createdBy) {
-      query.createdBy = req.query.createdBy;
-    }
-
-    const campaigns = await Campaign.find(query).sort({ createdAt: -1 });
+    const campaigns = await Campaign.find({ createdBy: req.user._id });
     res.json(campaigns);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 // ✅ Get All Campaigns (optionally filter by category)
 export const getCampaigns = async (req, res) => {
