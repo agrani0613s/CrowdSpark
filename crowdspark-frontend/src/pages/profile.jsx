@@ -62,18 +62,30 @@ function Profile() {
 
   
   
-  const fetchUserProfile = async () => {
-    try {
-      const res = await axios.get(`/users/${user._id}`);
-      setUser(res.data);
-    } catch (err) {
-      console.error("Failed to fetch user profile:", err);
-    }
-  };
+  // const fetchUserProfile = async () => {
+  //   try {
+  //     const res = await axios.get(`/users/${user._id}`);
+  //     setUser(res.data);
+  //   } catch (err) {
+  //     console.error("Failed to fetch user profile:", err);
+  //   }
+  // };
 
-  if (user && user._id) {
-    fetchUserProfile();
+  // if (user && user._id) {
+  //   fetchUserProfile();
+  // }
+
+  const fetchUserProfile = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.get(`/users/${user._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setUser(res.data);
+  } catch (err) {
+    console.error("Failed to fetch user profile:", err);
   }
+};
 
 
 const fetchUserDonations = async () => {

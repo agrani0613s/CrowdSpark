@@ -107,22 +107,22 @@ router.get("/my", protect, async (req, res) => {
 });
 
 // GET /api/campaigns
-// router.get("/", async (req, res) => {
-//   try {
-//     const { createdBy } = req.query;
+router.get("/", async (req, res) => {
+  try {
+    const { createdBy } = req.query;
 
-//     let query = {};
-//     if (createdBy) {
-//       query.createdBy = createdBy;
-//     }
+    let query = {};
+    if (createdBy) {
+      query.createdBy = createdBy;
+    }
 
-//     const campaigns = await Campaign.find(query);
-//     res.status(200).json(campaigns);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
+    const campaigns = await Campaign.find(query);
+    res.status(200).json(campaigns);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 // router.get("/category/:categoryName", getCampaignsByCategory);
 
 // ✅ Get all campaigns in a category
@@ -141,6 +141,31 @@ router.get("/category/:category", async (req, res) => {
     res.status(500).json({ message: "Server error fetching campaigns" });
   }
 });
+
+// Get single campaign by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const campaign = await Campaign.findById(req.params.id);
+    if (!campaign) {
+      return res.status(404).json({ message: "Campaign not found" });
+    }
+    res.json(campaign);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// GET /api/campaigns - Get all campaigns
+router.get('/', async (req, res) => {
+  try {
+    const campaigns = await Campaign.find();
+    res.json(campaigns);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error fetching campaigns' });
+  }
+});
+
 
 
 

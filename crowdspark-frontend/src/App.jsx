@@ -13,6 +13,7 @@ import SavedCampaigns from './pages/SavedCampaigns';
 import ProtectedRoute from './components/ProtectedRoute';
 import About from './pages/About';
 import CategoryPage from './pages/CategoryPage';
+import CampaignDetails from "./pages/CampaignDetails";
 
 
 export default function App() {
@@ -54,6 +55,7 @@ export default function App() {
         />
         <Route path="/about" element={<About />} />
         <Route path="/category/:categoryName" element={<CategoryPage />} />
+        <Route path="/campaign/:id" element={<CampaignDetails />} />
 
 <Route
   path="/campaigns"

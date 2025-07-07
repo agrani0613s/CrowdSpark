@@ -33,7 +33,7 @@ instance.interceptors.response.use(
       if (status === 401 || status === 403) {
         console.warn("Unauthorized or forbidden. Logging out user.");
         localStorage.removeItem("token");
-        window.location.href = "/login"; // Redirect to login page
+        window.location.href = "/profile"; // Redirect to login page
       }
     }
     return Promise.reject(error);

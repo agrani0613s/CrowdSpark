@@ -28,6 +28,16 @@ function AuthModal({ isOpen, onClose }) {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
+      // // ✅ Save token + user info together
+      // localStorage.setItem(
+      //   "user",
+      //   JSON.stringify({
+      //     token: res.data.token,
+      //     name: res.data.user?.name,
+      //     email: res.data.user?.email,
+      //   })
+      // );
+
       setMessage(isLogin ? "✅ Logged in successfully!" : "✅ Registered successfully!");
 
       setTimeout(() => {
