@@ -54,3 +54,16 @@ export const getCampaigns = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+export const getCampaignsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const campaigns = await Campaign.find({ category: category });
+    res.status(200).json({ data: campaigns });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+

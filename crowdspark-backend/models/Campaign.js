@@ -13,7 +13,10 @@ const campaignSchema = new mongoose.Schema({
   description: String,
   goal: Number,
   deadline: Date,
-  category: String,
+  category: {
+  type: String,
+  required: true,
+},
   image: String,
   createdBy: {
   type: mongoose.Schema.Types.ObjectId,

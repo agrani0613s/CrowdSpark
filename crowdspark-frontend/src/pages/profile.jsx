@@ -51,16 +51,32 @@ function Profile() {
     }
   };
 
-  const fetchUserProfile = async (userId) => {
+  // const fetchUserProfile = async (userId) => {
+  //   try {
+  //     const res = await axios.get(`/users/${userId}/profile`);
+  //     setUser(res.data);
+  //   } catch (err) {
+  //     console.error("Error fetching profile", err);
+  //   }
+  // };
+
+  
+  
+  const fetchUserProfile = async () => {
     try {
-      const res = await axios.get(`/users/${userId}/profile`);
+      const res = await axios.get(`/users/${user._id}`);
       setUser(res.data);
     } catch (err) {
-      console.error("Error fetching profile", err);
+      console.error("Failed to fetch user profile:", err);
     }
   };
 
-  const fetchUserDonations = async () => {
+  if (user && user._id) {
+    fetchUserProfile();
+  }
+
+
+const fetchUserDonations = async () => {
     try {
       const res = await axios.get(`/donations/my`);
       setDonations(res.data);
@@ -69,23 +85,43 @@ function Profile() {
     }
   };
 
+  // const handleProfilePicChange = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const formData = new FormData();
+  //   formData.append("profilePic", file);
+
+  //   try {
+  //     const res = await axios.post(`/users/${user._id}/profile-pic`, formData, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+  //     setUser(res.data.user);
+  //     alert("Profile picture updated!");
+  //   } catch (err) {
+  //     console.error("Error uploading profile picture", err);
+  //   }
+  // };
+
   const handleProfilePicChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file || !user?._id) return;
 
-    const formData = new FormData();
-    formData.append("profilePic", file);
+  const formData = new FormData();
+  formData.append("profilePic", file);
 
-    try {
-      const res = await axios.post(`/users/${user._id}/profile-pic`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setUser(res.data.user);
-      alert("Profile picture updated!");
-    } catch (err) {
-      console.error("Error uploading profile picture", err);
-    }
-  };
+  try {
+    const res = await axios.post(`/api/users/${user._id}/profile-pic`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    setUser(res.data.user);
+    alert("Profile picture updated!");
+  } catch (err) {
+    console.error("Error uploading profile picture", err);
+  }
+};
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -158,12 +194,20 @@ function Profile() {
     }
   };
 
+  const backendUrl = "http://localhost:5000"; // Replace with your prod URL when deployed
+const profilePicSrc = user?.profilePic
+  ? user.profilePic.startsWith("/uploads/")
+    ? `${backendUrl}${user.profilePic}`
+    : user.profilePic
+  : "/default-avatar.png";
+
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Profile Section */}
-      <div className="flex items-center space-x-6">
-        <div className="relative">
-          <img
+
+      {/* <div className="flex items-center space-x-6"> */}
+        {/* <div className="relative"> */}
+          {/* <img
             src={user?.profilePic || "/default-avatar.png"}
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover border-4 border-green-500"
@@ -174,8 +218,27 @@ function Profile() {
             onChange={handleProfilePicChange}
             className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
             title="Change Profile Picture"
-          />
-        </div>
+          /> */}
+        {/* </div> */}
+
+        {/* Profile Section */}
+<div className="flex items-center space-x-6">
+  <div className="relative">
+    <img
+      src={profilePicSrc}
+      alt="Profile"
+      className="w-32 h-32 rounded-full object-cover border-4 border-green-500"
+    />
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleProfilePicChange}
+      className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
+      title="Change Profile Picture"
+    />
+  </div>
+
+
         {/* <div>
           <h2 className="text-3xl font-bold">Welcome, {user?.name}</h2>
           <p className="text-gray-600 mt-1">📧 {user?.email}</p>
@@ -218,11 +281,12 @@ function Profile() {
                 className="block border p-2 rounded mb-2 w-72"
               />
               <input
-                type="text"
+                type="yel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                placeholder="Phone"
+                placeholder="Phone (e.g., 98765-43210)"
+                pattern="[0-9]{5}-[0-9]{5}" 
                 className="block border p-2 rounded mb-2 w-72"
               />
               <button
@@ -241,7 +305,7 @@ function Profile() {
             </>
           ) : (
             <>
-              <h2 className="text-3xl font-bold">{user?.name}</h2>
+              <h2 className="text-3xl font-bold">Welcome, {user?.name}</h2>
               <p className="text-gray-600 mt-1">📧 {user?.email}</p>
               <p className="text-gray-600">
                 📱 {user?.phone || "Phone not added"}
@@ -249,6 +313,9 @@ function Profile() {
               <p className="text-gray-600">
                 Role: {user?.isAdmin ? "Admin" : "User"}
               </p>
+              <p className="mt-2 text-green-700 font-semibold">
+            Donations Made: {donations.length}
+          </p>
               <button
                 onClick={() => setEditMode(true)}
                 className="bg-green-600 text-white px-4 py-2 mt-4 rounded hover:bg-green-700"
@@ -337,7 +404,7 @@ function Profile() {
               <h4 className="font-bold text-lg">{campaign.title}</h4>
               <p className="text-sm text-gray-600">{campaign.category}</p>
               <img
-                src={campaign.image}
+                src={campaign.image || "/default-campaign.jpeg"}
                 alt={campaign.title}
                 className="w-full h-40 object-cover rounded mt-2"
               />
@@ -369,7 +436,7 @@ function Profile() {
               className="min-w-[250px] bg-white rounded shadow p-4 flex-shrink-0 hover:shadow-md transition"
             >
               <img
-                src={donation.campaign.image}
+                src={donation.campaign.image || "/default-campaign.jpeg"}
                 alt={donation.campaign.title}
                 className="h-32 w-full object-cover rounded"
               />

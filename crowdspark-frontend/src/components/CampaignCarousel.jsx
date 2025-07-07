@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 export default function CampaignCarousel({ title, campaigns }) {
-  const placeholderImage = "\SCENERY.png";
+  const placeholderImage = "/default-campaign.jpeg";
   return (
     <section className="my-10 px-6">
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
