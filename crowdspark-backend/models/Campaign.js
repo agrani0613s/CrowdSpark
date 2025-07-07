@@ -11,9 +11,13 @@ const campaignSchema = new mongoose.Schema({
 // =======
   title: String,
   description: String,
+  raised: { type: Number, default: 0 },
   goal: Number,
   deadline: Date,
-  category: String,
+  category: {
+  type: String,
+  required: true,
+},
   image: String,
   createdBy: {
   type: mongoose.Schema.Types.ObjectId,

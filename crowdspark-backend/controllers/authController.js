@@ -4,7 +4,7 @@ import User from '../models/User.js';
 
 // REGISTER
 export const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, phone, password } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -17,6 +17,8 @@ export const registerUser = async (req, res) => {
     const newUser = await User.create({
       name,
       email,
+      phone: phone || "",
+      // occupation: occupation || "",
       password: hashedPassword,
     });
 
@@ -28,6 +30,10 @@ export const registerUser = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
         isAdmin: newUser.isAdmin || false, // optional: support for role
+        phone: newUser.phone,       // Include these
+        // occupation: newUser.occupation,
+        profilePic: newUser.profilePic, // Include this
+
       },
       token,
     });
@@ -62,6 +68,9 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin || false, // optional
+        phone: user.phone,             // Include these
+        // occupation: user.occupation,
+        profilePic: user.profilePic,
       },
       token,
       message: "Login successful",
@@ -72,3 +81,42 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// UPDATE PROFILE
+export const updateProfile = async (req, res) => {
+  const userId = req.user.id; // populated from auth middleware
+  const { name, phone, occupation, profilePic } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        name,
+        phone,
+        occupation,
+        profilePic,
+      },
+      { new: true } // return updated doc
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin || false,
+        phone: updatedUser.phone,
+        profilePic: updatedUser.profilePic || "",
+      },
+      message: "Profile updated successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

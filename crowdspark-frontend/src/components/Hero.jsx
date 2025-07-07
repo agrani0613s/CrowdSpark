@@ -1,6 +1,6 @@
 import heroImage from '../assets/Hero.png';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // 👈 Import toast
+import { toast } from 'react-hot-toast'; // 👈 Import toast
 import 'react-toastify/dist/ReactToastify.css'; // 👈 Import styles
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -13,9 +13,9 @@ export default function Hero() {
       // User is logged in → navigate to create campaign page
       navigate('/create');
     } else {
-      toast.warn('⚠️ Please login to create a campaign', {
+      toast.error('⚠️ Please login to create a campaign', {
         position: 'top-center',
-        autoClose: 3000, // 3 seconds
+        duration: 3000, // 3 seconds
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,

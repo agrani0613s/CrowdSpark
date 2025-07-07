@@ -14,14 +14,17 @@ import ProtectedRoute from './components/ProtectedRoute';
 import About from './pages/About';
 import CampaignDetail from './pages/CampaignDetail';
 import CategoryPage from './pages/CategoryPage';
+import CampaignDetails from "./pages/CampaignDetails";
 
 
 export default function App() {
   return (
     <Router>
       <Toaster position="top-center" reverseOrder={false} />
+
       <Routes>
         <Route path="/" element={<Home />} />
+        
         {/* Protected Routes */}
         <Route 
           path="/profile" 
@@ -54,6 +57,7 @@ export default function App() {
         />
         <Route path="/about" element={<About />} />
         <Route path="/category/:categoryName" element={<CategoryPage />} />
+        <Route path="/campaign/:id" element={<CampaignDetails />} />
 
 <Route
   path="/campaigns"
