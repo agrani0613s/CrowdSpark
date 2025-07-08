@@ -12,7 +12,7 @@ import AllCampaigns from './pages/AllCampaigns';
 import SavedCampaigns from './pages/SavedCampaigns';
 import ProtectedRoute from './components/ProtectedRoute';
 import About from './pages/About';
-import CampaignDetail from './pages/CampaignDetail';
+// import CampaignDetail from './pages/CampaignDetail';
 import CategoryPage from './pages/CategoryPage';
 import CampaignDetails from "./pages/CampaignDetails";
 
@@ -35,7 +35,7 @@ export default function App() {
           } 
 
         />
-<Route path="/campaign/:id" element={<CampaignDetail />} />
+{/* <Route path="/campaign/:id" element={<CampaignDetail />} /> */}
         <Route 
           path="/create" 
           element={

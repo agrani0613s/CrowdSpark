@@ -23,7 +23,7 @@ function Navbar({ onLoginClick }) {
           </button>
 
           {/* Search Bar */}
-          <div className="relative">
+          {/* <div className="relative">
             <label htmlFor="search" className="sr-only">
               Search campaigns
             </label>
@@ -33,7 +33,7 @@ function Navbar({ onLoginClick }) {
               placeholder="Search campaigns..."
               className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
             />
-          </div>
+          </div> */}
 
           {/* Navigation Links */}
           <Link to="/about" className="text-gray-700 hover:text-green-600">
@@ -48,9 +48,9 @@ function Navbar({ onLoginClick }) {
             Saved Campaigns
           </Link>
 
-          <Link to="/campaigns" className="text-gray-700 hover:text-green-600">
+          {/* <Link to="/campaigns" className="text-gray-700 hover:text-green-600">
             All Campaigns
-          </Link>
+          </Link> */}
 
           {user && (
             <Link to="/profile" className="text-gray-700 hover:text-green-600">
