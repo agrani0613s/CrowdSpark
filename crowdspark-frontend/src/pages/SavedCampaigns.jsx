@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
 
-// Mock campaign data (same as AllCampaigns.jsx)
+// Use same mock data as AllCampaigns
 const mockCampaigns = {
   "save-oceans": {
     title: "Save the Oceans",
@@ -19,59 +18,56 @@ const mockCampaigns = {
 const SavedCampaigns = () => {
   const [saved, setSaved] = useState([]);
 
+  // Load saved campaign IDs from localStorage
   useEffect(() => {
     const savedFromStorage = JSON.parse(localStorage.getItem("savedCampaigns")) || [];
     setSaved(savedFromStorage);
   }, []);
 
+  // Update localStorage whenever saved list changes
+  useEffect(() => {
+    localStorage.setItem("savedCampaigns", JSON.stringify(saved));
+  }, [saved]);
+
   const handleUnsave = (id) => {
     const updated = saved.filter((item) => item !== id);
     setSaved(updated);
-    localStorage.setItem("savedCampaigns", JSON.stringify(updated));
-    toast("❌ Campaign removed from saved");
+    toast("❌ Campaign unsaved");
   };
 
-  const savedCampaignData = saved
-    .map((id) => ({ id, ...mockCampaigns[id] }))
-    .filter((camp) => camp.title); // in case of invalid/missing ID
+  const savedCampaigns = saved
+    .filter((id) => mockCampaigns[id])
+    .map((id) => ({ id, ...mockCampaigns[id] }));
 
-  if (savedCampaignData.length === 0) {
+  if (savedCampaigns.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-xl text-gray-600">No saved campaigns yet 😕</h2>
-        <Link
-          to="/campaigns"
-          className="text-green-600 underline mt-4 inline-block"
-        >
-          Browse campaigns
-        </Link>
+      <div className="text-center py-16 text-gray-500">
+        You haven't saved any campaigns yet.
       </div>
     );
   }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center text-green-700 mb-8">
+      <h1 className="text-3xl font-bold text-green-700 mb-8 text-center">
         Saved Campaigns
       </h1>
 
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {savedCampaignData.map((campaign) => (
+        {savedCampaigns.map((campaign) => (
           <div
             key={campaign.id}
             className="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden flex flex-col"
           >
-            <Link to={`/campaign/${campaign.id}`}>
-              <img
-                src={campaign.image}
-                alt={campaign.title}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://via.placeholder.com/800x400?text=No+Image";
-                }}
-                className="w-full h-40 object-cover"
-              />
-            </Link>
+            <img
+              src={campaign.image}
+              alt={campaign.title}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://via.placeholder.com/800x400?text=No+Image";
+              }}
+              className="w-full h-40 object-cover"
+            />
 
             <div className="p-4 flex-grow">
               <h2 className="text-xl font-semibold text-green-700">
@@ -83,7 +79,7 @@ const SavedCampaigns = () => {
             <div className="p-4 border-t text-right">
               <button
                 onClick={() => handleUnsave(campaign.id)}
-                className="text-sm font-medium text-red-600 hover:underline"
+                className="text-sm font-medium text-red-500 hover:underline"
               >
                 Unsave Campaign
               </button>
