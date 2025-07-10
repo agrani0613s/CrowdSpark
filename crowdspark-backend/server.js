@@ -15,10 +15,10 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CORS configuration
+// Allowed CORS origins (for dev + production)
 const allowedOrigins = [
-  "http://localhost:5173", // dev
-  "https://crowdspark-frontend.vercel.app", // ✅ replace with your actual deployed frontend URL
+  "http://localhost:5173",                            // Vite dev
+  "https://crowdspark-frontend.vercel.app"           // ✅ Replace with actual frontend URL if custom domain
 ];
 
 app.use(cors({
@@ -28,7 +28,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Static files (uploads)
+// Static files (uploads folder)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Import routes
@@ -39,7 +39,7 @@ import donationRoutes from "./routes/donations.js";
 import userRoutes from './routes/userRoutes.js';
 import suggestionRoutes from './routes/suggestionRoutes.js';
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api', geminiRoutes);
@@ -47,12 +47,17 @@ app.use('/api', suggestionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/donations', donationRoutes);
 
-// Test endpoint
+// Health check route
 app.get('/api/auth/test', (req, res) => {
   res.send('Backend is working');
 });
 
-// Connect to MongoDB and start server
+// Optional homepage route (for Render root URL)
+app.get("/", (req, res) => {
+  res.send("🎉 CrowdSpark Backend is Running");
+});
+
+// MongoDB connection + server start
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
@@ -61,4 +66,6 @@ mongoose.connect(process.env.MONGO_URI)
       console.log(`🚀 Server running on port ${port}`);
     });
   })
-  .catch(err => console.error("❌ MongoDB connection failed:", err));
+  .catch(err => {
+    console.error("❌ MongoDB connection failed:", err);
+  });
