@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 // Allowed CORS origins (for dev + production)
 const allowedOrigins = [
   "http://localhost:5173",                            // Vite dev
-  "https://crowdspark-frontend.vercel.app"           // ✅ Replace with actual frontend URL if custom domain
+  "https://crowd-spark-umber.vercel.app"           // ✅ Replace with actual frontend URL if custom domain
 ];
 
 app.use(cors({
