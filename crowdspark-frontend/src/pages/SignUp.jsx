@@ -18,19 +18,23 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
+try {
+  const baseURL = import.meta.env.DEV
+    ? "http://localhost:5000"
+    : import.meta.env.VITE_API_URL;
 
-      if (res.data && res.data.user) {
-        localStorage.setItem("userId", res.data.user._id);
-        navigate("/dashboard");
-      } else {
-        setError("Signup failed.");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("User already exists or server error.");
-    }
+  const res = await axios.post(`${baseURL}/api/auth/signup`, formData);
+
+  if (res.data && res.data.user) {
+    localStorage.setItem("userId", res.data.user._id);
+    navigate("/dashboard");
+  } else {
+    setError("Signup failed.");
+  }
+} catch (err) {
+  console.error(err);
+  setError("User already exists or server error.");
+}
   };
 
   return (

@@ -1,15 +1,18 @@
 import axios from "axios";
 
+// 🌐 Use localhost for dev, Render URL for production
+const API_BASE_URL = import.meta.env.DEV
+  ? "http://localhost:5000/api"
+  : `${import.meta.env.VITE_API_URL}/api`;
+
 const instance = axios.create({
-  // baseURL: "http://localhost:5000/api",
-  baseURL: "/api", // Only /api not full http://localhost:5000/api
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
-  
 });
 
-// ✅ Request interceptor to attach token
+// ✅ Attach token automatically
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -18,23 +21,16 @@ instance.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    console.error("Request error:", error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// ✅ Response interceptor to catch 401/403 globally
+// ✅ Handle auth errors globally
 instance.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   (error) => {
-    if (error.response) {
-      const { status } = error.response;
-      if (status === 401 || status === 403) {
-        console.warn("Unauthorized or forbidden. Logging out user.");
-        localStorage.removeItem("token");
-        window.location.href = "/profile"; // Redirect to login page
-      }
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      localStorage.removeItem("token");
+      window.location.href = "/profile";
     }
     return Promise.reject(error);
   }

@@ -206,7 +206,10 @@ const fetchUserDonations = async () => {
     }
   };
 
-  const backendUrl = "http://localhost:5000"; // Replace with your prod URL when deployed
+const backendUrl = import.meta.env.DEV
+  ? "http://localhost:5000"
+  : import.meta.env.VITE_API_URL;
+
 const profilePicSrc = user?.profilePic
   ? user.profilePic.startsWith("/uploads/")
     ? `${backendUrl}${user.profilePic}`

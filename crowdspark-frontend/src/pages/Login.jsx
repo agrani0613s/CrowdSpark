@@ -24,22 +24,25 @@ const Login = () => {
       // ✅ MOCK LOGIN: Set fake userId
       localStorage.setItem("userId", "mock-user-id-123");
       navigate("/", { replace: true });
-    } else {
-      try {
-        // 🔐 REAL LOGIN: Use actual backend API
-        const response = await axios.post("http://localhost:5000/api/auth/login", {
-          email,
-          password,
-        });
+    }else {
+  try {
+    const baseURL = import.meta.env.DEV
+      ? "http://localhost:5000"
+      : import.meta.env.VITE_API_URL;
 
-        const { user } = response.data;
-        localStorage.setItem("userId", user._id);
-        navigate("/", { replace: true });
-      } catch (error) {
-        alert("Login failed. Please check credentials.");
-        console.error(error);
-      }
-    }
+    const response = await axios.post(`${baseURL}/api/auth/login`, {
+      email,
+      password,
+    });
+
+    const { user } = response.data;
+    localStorage.setItem("userId", user._id);
+    navigate("/", { replace: true });
+  } catch (error) {
+    alert("Login failed. Please check credentials.");
+    console.error(error);
+  }
+}
   };
 
   return (
