@@ -1,4 +1,4 @@
-import heroImage from '../assets/Hero.png';
+import heroImage from "../assets/hero.png";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast'; // 👈 Import toast
 import 'react-toastify/dist/ReactToastify.css'; // 👈 Import styles
