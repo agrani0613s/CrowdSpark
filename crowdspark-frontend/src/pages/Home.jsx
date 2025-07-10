@@ -168,7 +168,7 @@ export default function Home() {
 
 
   return (
-    <>
+    <div className="bg-yellow-50 shadow-md">
       <Navbar onLoginClick={() => setShowAuth(true)} />
       <Hero onLoginClick={() => setShowAuth(true)} />
 
@@ -179,11 +179,12 @@ export default function Home() {
         title="💰 Highest Funded Campaigns"
         campaigns={highestFunded}
       />
+      
 
       <ContactSection />
       <Footer />
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
       <ExplorePanel isOpen={showExplore} onClose={() => setShowExplore(false)} />
-    </>
+    </div>
   );
 }

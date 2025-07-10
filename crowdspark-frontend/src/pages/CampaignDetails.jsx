@@ -74,8 +74,10 @@ export default function CampaignDetails() {
     
   };
 
+  const backendBaseURL = import.meta.env.VITE_API_URL;
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="bg-yellow-40 p-6 max-w-4xl mx-auto">
       {/* Back button */}
       <button
         onClick={() => navigate(-1)}
@@ -84,12 +86,12 @@ export default function CampaignDetails() {
         ← Back to Category
       </button>
 
-      <h1 className="text-4xl font-bold text-green-700 mb-4">
+      <h1 className="text-4xl justify-center font-bold text-green-700 mb-4">
         {campaign.title}
       </h1>
 
       <img
-        src={campaign.image || "/default-campaign.jpeg"}
+        src={`${backendBaseURL}${campaign.image}` || "/default-campaign.jpeg"}
         alt={campaign.title}
         className="w-full h-64 object-cover rounded-lg shadow mb-6"
       />

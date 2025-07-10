@@ -42,10 +42,11 @@ const SavedCampaigns = () => {
   if (savedCampaigns.length === 0) {
     return (
       <div className="text-center py-16 text-gray-500">
-        You haven't saved any campaigns yet.
+        You haven not saved any campaigns yet.
       </div>
     );
   }
+const backendBaseURL = import.meta.env.VITE_API_URL;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -60,7 +61,7 @@ const SavedCampaigns = () => {
             className="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden flex flex-col"
           >
             <img
-              src={campaign.image}
+              src={`${backendBaseURL}${campaign.image}`}
               alt={campaign.title}
               onError={(e) => {
                 e.target.onerror = null;

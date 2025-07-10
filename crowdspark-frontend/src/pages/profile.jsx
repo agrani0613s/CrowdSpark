@@ -293,7 +293,7 @@ const profilePicSrc = user?.profilePic
                 className="block border p-2 rounded mb-2 w-72"
               />
               <input
-                type="yel"
+                type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
@@ -344,7 +344,8 @@ const profilePicSrc = user?.profilePic
           )}
         </div>
       </div>
-      
+      {/* const backendBaseURL = import.meta.env.VITE_API_URL; */}
+
 
       {/* My Fundraisers */}
       <h3 className="mt-8 text-xl font-semibold">Your Campaigns:</h3>
@@ -362,7 +363,7 @@ const profilePicSrc = user?.profilePic
         <h4 className="font-bold text-lg">{campaign.title}</h4>
         <p className="text-sm text-gray-600">{campaign.category}</p>
         <img
-          src={campaign.image || "/default-campaign.jpeg"}
+          src={`${backendUrl}${campaign.image}`|| "/default-campaign.jpeg"}
           alt={campaign.title}
           className="w-full h-40 object-cover rounded mt-2"
         />
@@ -416,7 +417,7 @@ const profilePicSrc = user?.profilePic
               <h4 className="font-bold text-lg">{campaign.title}</h4>
               <p className="text-sm text-gray-600">{campaign.category}</p>
               <img
-                src={campaign.image || "/default-campaign.jpeg"}
+                src={`${backendUrl}${campaign.image}` || "/default-campaign.jpeg"}
                 alt={campaign.title}
                 className="w-full h-40 object-cover rounded mt-2"
               />

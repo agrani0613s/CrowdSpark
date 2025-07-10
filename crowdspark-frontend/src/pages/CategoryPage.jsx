@@ -239,11 +239,16 @@ export default function CategoryPage() {
     );
   }
 
+  const backendBaseURL = import.meta.env.VITE_API_URL;
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h2 className="text-3xl font-bold text-green-700 mb-6 capitalize">
         {categoryName} Campaigns
       </h2>
+
+      
+
 
       {campaigns.length === 0 ? (
         <p className="text-gray-600 text-lg">No campaigns found in this category.</p>
@@ -255,7 +260,7 @@ export default function CategoryPage() {
               className="bg-white rounded-lg shadow hover:shadow-lg transition duration-300 border"
             >
               <img
-                src={campaign.image || "/default-campaign.jpeg"}
+                src={`${backendBaseURL}${campaign.image}` || "/default-campaign.jpeg"}
                 alt={campaign.title}
                 className="w-full h-48 object-cover rounded-t-lg"
               />

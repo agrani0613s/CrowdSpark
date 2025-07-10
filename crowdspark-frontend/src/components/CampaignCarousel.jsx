@@ -88,7 +88,7 @@ export default function CampaignCarousel({ title, campaigns }) {
   };
 
   return (
-    <section className="my-10 px-6">
+    <section className="bg-yellow-40 shadow-md my-10 px-6" >
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
       <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide">
         {campaigns.map((campaign, idx) => {
@@ -96,16 +96,18 @@ export default function CampaignCarousel({ title, campaigns }) {
           const raised = typeof campaign.raised === "number" ? campaign.raised : 0;
           const goal = typeof campaign.goal === "number" ? campaign.goal : 1; // avoid div by 0
           const percentage = Math.min((raised / goal) * 100, 100);
+          const backendBaseURL = import.meta.env.VITE_API_URL;
+
 
           return (
             <button
               key={idx}
               type="button"
               onClick={() => handleCardClick(campaign._id)}
-              className="min-w-[300px] bg-white rounded-lg shadow-md p-4 flex-shrink-0 cursor-pointer hover:shadow-lg hover:scale-[1.03] transition-all focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="min-w-[300px] bg-grey-20 rounded-lg shadow-md p-4 flex-shrink-0 cursor-pointer hover:shadow-lg hover:scale-[1.03] transition-all focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <img
-                src={campaign.image || placeholderImage}
+                src={`${backendBaseURL}${campaign.image}` || placeholderImage}
                 alt={campaign.title || "Campaign"}
                 onError={(e) => { e.target.src = placeholderImage; }}
                 className="h-40 w-full object-cover rounded"
