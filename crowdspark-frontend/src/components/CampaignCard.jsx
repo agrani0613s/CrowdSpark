@@ -10,14 +10,16 @@ export default function CampaignCard({ campaign }) {
     setIsSaved(alreadySaved);
   }, [campaign.id]);
 
-  const handleSave = () => {
-    const savedCampaigns = JSON.parse(localStorage.getItem('savedCampaigns')) || [];
-    if (!isSaved) {
-      savedCampaigns.push(campaign);
-      localStorage.setItem('savedCampaigns', JSON.stringify(savedCampaigns));
-      setIsSaved(true);
-    }
-  };
+const handleSave = async () => {
+  try {
+    await axios.post(`/api/users/save-campaign/${campaign.id}`, {}, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    });
+    setIsSaved(true);
+  } catch (err) {
+    console.error("Error saving campaign", err);
+  }
+};
 
   return (
     <div className="bg-white p-4 rounded shadow border border-gray-200">

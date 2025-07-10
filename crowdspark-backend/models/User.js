@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
     type: String, 
     default: '' 
   },
+  savedCampaigns: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Campaign',
+  }
+],
   donations: [{ 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Donation' 

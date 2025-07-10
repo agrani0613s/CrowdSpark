@@ -25,23 +25,34 @@ const Login = () => {
       localStorage.setItem("userId", "mock-user-id-123");
       navigate("/", { replace: true });
     }else {
-  try {
-    const baseURL = import.meta.env.DEV
-      ? "http://localhost:5000"
-      : import.meta.env.VITE_API_URL;
+try {
+  const baseURL = import.meta.env.DEV
+    ? "http://localhost:5000"
+    : import.meta.env.VITE_API_URL;
 
-    const response = await axios.post(`${baseURL}/api/auth/login`, {
-      email,
-      password,
-    });
+  const response = await axios.post(`${baseURL}/api/auth/login`, {
+    email,
+    password,
+  });
 
-    const { user } = response.data;
-    localStorage.setItem("userId", user._id);
+  const { user, token } = response.data;
+
+  if (user && token) {
+    localStorage.setItem("user", JSON.stringify({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token,
+    }));
+
     navigate("/", { replace: true });
-  } catch (error) {
-    alert("Login failed. Please check credentials.");
-    console.error(error);
+  } else {
+    alert("Login failed. Invalid response.");
   }
+} catch (error) {
+  alert("Login failed. Please check credentials.");
+  console.error(error);
+}
 }
   };
 

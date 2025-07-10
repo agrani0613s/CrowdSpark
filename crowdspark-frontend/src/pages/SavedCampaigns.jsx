@@ -1,52 +1,63 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
-
-// Use same mock data as AllCampaigns
-const mockCampaigns = {
-  "save-oceans": {
-    title: "Save the Oceans",
-    description: "Help clean plastic waste from the sea 🌊",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-  },
-  "educate-girls": {
-    title: "Educate Every Girl",
-    description: "Support education initiatives for girls in rural India 🎓",
-    image: "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=800&q=80",
-  },
-};
 
 const SavedCampaigns = () => {
   const [saved, setSaved] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load saved campaign IDs from localStorage
+  const backendBaseURL = import.meta.env.VITE_API_URL;
+
+  // 🔁 Fetch saved campaigns from backend
   useEffect(() => {
-    const savedFromStorage = JSON.parse(localStorage.getItem("savedCampaigns")) || [];
-    setSaved(savedFromStorage);
-  }, []);
+    const fetchSaved = async () => {
+      try {
+        const res = await axios.get(`${backendBaseURL}/api/users/saved-campaigns`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setSaved(res.data);
+      } catch (error) {
+        console.error("❌ Failed to fetch saved campaigns", error);
+        toast.error("Failed to load saved campaigns");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Update localStorage whenever saved list changes
-  useEffect(() => {
-    localStorage.setItem("savedCampaigns", JSON.stringify(saved));
-  }, [saved]);
+    fetchSaved();
+  }, [backendBaseURL]);
 
-  const handleUnsave = (id) => {
-    const updated = saved.filter((item) => item !== id);
-    setSaved(updated);
-    toast("❌ Campaign unsaved");
+  // ❌ Handle unsave
+  const handleUnsave = async (id) => {
+    try {
+      await axios.delete(`${backendBaseURL}/api/users/save-campaign/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setSaved((prev) => prev.filter((campaign) => campaign._id !== id));
+      toast("❌ Campaign unsaved");
+    } catch (err) {
+      console.error("Error unsaving campaign", err);
+      toast.error("Could not unsave campaign");
+    }
   };
 
-  const savedCampaigns = saved
-    .filter((id) => mockCampaigns[id])
-    .map((id) => ({ id, ...mockCampaigns[id] }));
-
-  if (savedCampaigns.length === 0) {
+  if (loading) {
     return (
-      <div className="text-center py-16 text-gray-500">
-        You haven not saved any campaigns yet.
+      <div className="text-center py-20 text-gray-500 text-xl">Loading...</div>
+    );
+  }
+
+  if (saved.length === 0) {
+    return (
+      <div className="text-center py-20 text-gray-500 text-lg">
+        You haven’t saved any campaigns yet.
       </div>
     );
   }
-const backendBaseURL = import.meta.env.VITE_API_URL;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -55,17 +66,22 @@ const backendBaseURL = import.meta.env.VITE_API_URL;
       </h1>
 
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {savedCampaigns.map((campaign) => (
+        {saved.map((campaign) => (
           <div
-            key={campaign.id}
+            key={campaign._id}
             className="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden flex flex-col"
           >
             <img
-              src={`${backendBaseURL}${campaign.image}`}
+              src={
+                campaign.image?.startsWith("http")
+                  ? campaign.image
+                  : `${backendBaseURL}/${campaign.image}`
+              }
               alt={campaign.title}
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = "https://via.placeholder.com/800x400?text=No+Image";
+                e.target.src =
+                  "https://via.placeholder.com/800x400?text=No+Image";
               }}
               className="w-full h-40 object-cover"
             />
@@ -79,7 +95,7 @@ const backendBaseURL = import.meta.env.VITE_API_URL;
 
             <div className="p-4 border-t text-right">
               <button
-                onClick={() => handleUnsave(campaign.id)}
+                onClick={() => handleUnsave(campaign._id)}
                 className="text-sm font-medium text-red-500 hover:underline"
               >
                 Unsave Campaign

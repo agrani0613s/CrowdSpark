@@ -1,64 +1,133 @@
 import User from '../models/User.js';
 import Campaign from '../models/Campaign.js';
-import Donation from '../models/Donation.js';
+import asyncHandler from 'express-async-handler';
+import path from 'path';
+import fs from 'fs';
 
-export const getUserProfile = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const user = await User.findById(userId)
-      .populate('donations')
-      .populate('fundraisers');
+// =======================
+// 📌 Saved Campaigns Logic
+// =======================
 
-    if (!user) return res.status(404).json({ message: 'User not found' });
+// @desc    Save a campaign
+// @route   POST /api/users/save-campaign/:campaignId
+// @access  Private
+export const saveCampaign = asyncHandler(async (req, res) => {
+  const { campaignId } = req.params;
 
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
   }
-};
 
-// export const uploadProfilePic = async (req, res) => {
-//   try {
-//     const userId = req.params.id;
-//     const profilePicUrl = `/uploads/${req.file.filename}`;
-//     const user = await User.findByIdAndUpdate(userId, { profilePic: profilePicUrl }, { new: true });
-//     res.json({ message: 'Profile picture updated', user });
-//   } catch (err) {
-//     res.status(500).json({ message: 'Error uploading picture' });
-//   }
-// };
-
-export const uploadProfilePic = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    user.profilePic = `/uploads/${req.file.filename}`;
+  if (!user.savedCampaigns.includes(campaignId)) {
+    user.savedCampaigns.push(campaignId);
     await user.save();
-
-    res.status(200).json({ user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error uploading profile picture" });
   }
-};
 
-export const updateProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+  res.status(200).json({ message: 'Campaign saved successfully' });
+});
 
+// @desc    Unsave a campaign
+// @route   DELETE /api/users/save-campaign/:campaignId
+// @access  Private
+export const unsaveCampaign = asyncHandler(async (req, res) => {
+  const { campaignId } = req.params;
+
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  user.savedCampaigns = user.savedCampaigns.filter(
+    (id) => id.toString() !== campaignId
+  );
+
+  await user.save();
+
+  res.status(200).json({ message: 'Campaign removed from saved list' });
+});
+
+// @desc    Get all saved campaigns for user
+// @route   GET /api/users/saved-campaigns
+// @access  Private
+export const getSavedCampaigns = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).populate('savedCampaigns');
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  res.status(200).json(user.savedCampaigns);
+});
+
+
+// =======================
+// 📌 Profile Section (already working in your app)
+// =======================
+
+// @desc    Get user profile
+// @route   GET /api/users/:id/profile
+// @access  Public
+export const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password');
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Upload user profile picture
+// @route   POST /api/users/:id/profile-pic
+// @access  Private
+export const uploadProfilePic = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  // Remove previous profile picture if exists
+  if (user.profilePic && fs.existsSync(user.profilePic)) {
+    fs.unlinkSync(user.profilePic);
+  }
+
+  user.profilePic = req.file.path;
+  await user.save();
+
+  res.status(200).json({ message: 'Profile picture updated', profilePic: user.profilePic });
+});
+
+// @desc    Update user profile
+// @route   PUT /api/users/:id/update
+// @access  Private
+export const updateProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
     user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.bio = req.body.bio || user.bio;
+    user.phone = req.body.phone || user.phone;
+    user.occupation = req.body.occupation || user.occupation;
 
     const updatedUser = await user.save();
-    res.status(200).json(updatedUser);
-  } catch (err) {
-    console.error("Error updating user:", err);
-    res.status(500).json({ message: "Server error" });
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      phone: updatedUser.phone,
+      occupation: updatedUser.occupation,
+      profilePic: updatedUser.profilePic,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
   }
-};
-
-
-
+});

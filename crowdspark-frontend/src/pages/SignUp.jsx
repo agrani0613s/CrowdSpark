@@ -25,8 +25,16 @@ try {
 
   const res = await axios.post(`${baseURL}/api/auth/signup`, formData);
 
-  if (res.data && res.data.user) {
-    localStorage.setItem("userId", res.data.user._id);
+  if (res.data && res.data.user && res.data.token) {
+    const { user, token } = res.data;
+
+    localStorage.setItem("user", JSON.stringify({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token,
+    }));
+
     navigate("/dashboard");
   } else {
     setError("Signup failed.");
