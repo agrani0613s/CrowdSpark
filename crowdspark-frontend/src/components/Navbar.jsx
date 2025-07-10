@@ -40,9 +40,9 @@ function Navbar({ onLoginClick }) {
             About
           </Link>
 
-          <Link to="/dashboard" className="text-gray-700 hover:text-green-600">
+          {/* <Link to="/dashboard" className="text-gray-700 hover:text-green-600">
             Dashboard
-          </Link>
+          </Link> */}
 
           <Link to="/saved" className="text-gray-700 hover:text-green-600">
             Saved Campaigns
