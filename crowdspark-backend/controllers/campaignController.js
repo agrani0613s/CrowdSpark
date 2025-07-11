@@ -27,6 +27,8 @@ export const getMyCampaigns = asyncHandler(async (req, res) => {
 });
 
 // ✅ Get All Campaigns (optionally filter by category or createdBy)
+// controllers/campaignController.js
+// ✅ Get All Campaigns (optionally filter by category or createdBy or sort by views)
 export const getCampaigns = asyncHandler(async (req, res) => {
   const query = {};
 
@@ -38,9 +40,18 @@ export const getCampaigns = asyncHandler(async (req, res) => {
     query.createdBy = req.query.createdBy;
   }
 
-  const campaigns = await Campaign.find(query).sort({ createdAt: -1 });
+  let sort = { createdAt: -1 }; // default
+
+  if (req.query.sortBy === "views") {
+    sort = { views: -1 };
+  } else if (req.query.sortBy === "raised") {
+    sort = { raised: -1 };
+  }
+
+  const campaigns = await Campaign.find(query).sort(sort);
   res.json(campaigns);
 });
+
 
 // ✅ Get Campaign by ID (no view increment here!)
 export const getCampaignById = asyncHandler(async (req, res) => {

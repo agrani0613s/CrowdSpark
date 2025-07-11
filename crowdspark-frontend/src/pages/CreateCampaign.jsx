@@ -2,7 +2,6 @@ import { useState } from "react";
 import CampaignImage from '../assets/CreateCampaignPage.jpg';
 import axios from '../api/axios';
 
-
 export default function CreateCampaign() {
   const [form, setForm] = useState({
     title: "",
@@ -25,26 +24,25 @@ export default function CreateCampaign() {
   };
 
   const handleGenerateDescription = async () => {
-  if (!form.title) {
-    alert("Please enter a campaign title first.");
-    return;
-  }
+    if (!form.title) {
+      alert("Please enter a campaign title first.");
+      return;
+    }
 
-  setStatus("🔄 Generating description...");
+    setStatus("🔄 Generating description...");
 
-  try {
-    const res = await axios.post('/generate-description', {
-      title: form.title,
-    });
+    try {
+      const res = await axios.post('/generate-description', {
+        title: form.title,
+      });
 
-    setForm({ ...form, description: res.data.description });
-    setStatus("✅ Description generated!");
-  } catch (err) {
-    console.error(err);
-    setStatus("❌ Failed to generate description.");
-  }
+      setForm({ ...form, description: res.data.description });
+      setStatus("✅ Description generated!");
+    } catch (err) {
+      console.error(err);
+      setStatus("❌ Failed to generate description.");
+    }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +62,7 @@ export default function CreateCampaign() {
 
       console.log("Campaign created:", response.data);
       setStatus("✅ Campaign successfully submitted!");
-      // Optionally reset form
+
       setForm({
         title: "",
         description: "",
@@ -73,11 +71,12 @@ export default function CreateCampaign() {
         category: "",
         image: null,
       });
+
       setTimeout(() => {
-      setStatus("");
-      window.location.href = "/profile"; // ✅ or replace with navigate("/profile") if using react-router
+        setStatus("");
+        window.location.href = "/profile";
       }, 2000);
-      
+
     } catch (err) {
       console.error("Error creating campaign:", err);
       setStatus("❌ Failed to submit campaign.");
@@ -85,105 +84,117 @@ export default function CreateCampaign() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center filter blur-sm scale-110"
-        style={{
-          backgroundImage: `url(${CampaignImage})`,
-        }}
-      ></div>
+    <>
+      {/* Back to Home button */}
+      <div className="absolute top-4 left-4 z-20">
+        <a
+          href="/"
+          className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md shadow-md hover:bg-green-700 transition text-sm font-semibold"
+        >
+          ← Back to Home
+        </a>
+      </div>
 
-      <div className="relative z-10 w-full max-w-3xl p-8 bg-yellow-50/90 backdrop-blur-md rounded-xl shadow-xl text-center">
-        <h2 className="text-3xl font-bold text-green-700 mb-6">Start a New Campaign</h2>
+      {/* Form Section */}
+      <div className="relative min-h-screen flex items-center justify-center bg-gray-50 overflow-hidden p-4">
+        <div
+          className="absolute inset-0 bg-cover bg-center filter blur-sm scale-110"
+          style={{ backgroundImage: `url(${CampaignImage})` }}
+        ></div>
+
+        <div className="relative z-10 w-full max-w-4xl p-10 bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl">
+          <h2 className="text-4xl font-extrabold text-green-700 text-center mb-6">
+            🚀 Start a New Campaign
+          </h2>
 
           {status && (
-          <div className={`text-center text-sm font-semibold mb-4 ${status.startsWith("✅") ? "text-green-700" : "text-red-600"}`}>
-            {status}
-          </div>
-  )}
+            <div className={`text-center text-sm font-semibold mb-4 ${status.startsWith("✅") ? "text-green-700" : "text-red-600"}`}>
+              {status}
+            </div>
+          )}
 
-        <form className="space-y-4" onSubmit={handleSubmit} encType="multipart/form-data">
-          <input
-            type="text"
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            placeholder="Campaign Title"
-            required
-            className="w-full border rounded-md px-4 py-2 text-center"
-          />
+          <form className="space-y-5" onSubmit={handleSubmit} encType="multipart/form-data">
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder="Enter Campaign Title"
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
 
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Describe your campaign..."
-            rows={5}
-            required
-            className="w-full border rounded-md px-4 py-2 text-center"
-          />
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Describe your campaign goals, mission, and impact..."
+              rows={5}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
 
-          <button
-             type="button"
-             onClick={handleGenerateDescription}
-             className="bg-green-600 text-white px-5 py-1 rounded-md hover:bg-purple-700 w-half"
-          > 
-            ✨ Generate with AI
-          </button>
+            <button
+              type="button"
+              onClick={handleGenerateDescription}
+              className="bg-green-600 text-white px-5 py-2 rounded-md hover:bg-purple-700 transition w-full"
+            >
+              ✨ Generate Description with AI
+            </button>
 
-          <input
-            type="number"
-            name="goal"
-            value={form.goal}
-            onChange={handleChange}
-            placeholder="Funding Goal (INR)"
-            required
-            className="w-full border rounded-md px-4 py-2 text-center" 
-          />
+            <input
+              type="number"
+              name="goal"
+              value={form.goal}
+              onChange={handleChange}
+              placeholder="Funding Goal (INR)"
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
 
-          <input
-            type="date"
-            name="deadline"
-            value={form.deadline}
-            onChange={handleChange}
-            required
-            className="w-full border rounded-md px-4 py-2 text-center"
-          />
+            <input
+              type="date"
+              name="deadline"
+              value={form.deadline}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
 
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            required
-            className="w-full border rounded-md px-4 py-2 text-center"
-          >
-            <option value="">Select a Category</option>
-            <option value="health">Health</option>
-            <option value="education">Education</option>
-            <option value="environment">Environment</option>
-            <option value="tech">Technology</option>
-            <option value="art">Art</option>
-            <option value="social">Social Impact</option>
-            <option value="others">Other</option>
-            
-          </select>
+            <select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value="">Select a Category</option>
+              <option value="health">Health</option>
+              <option value="education">Education</option>
+              <option value="environment">Environment</option>
+              <option value="tech">Technology</option>
+              <option value="art">Art</option>
+              <option value="social">Social Impact</option>
+              <option value="others">Other</option>
+            </select>
 
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleChange}
-            className="w-full text-center"
-          />
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+            />
 
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 w-full"
-          >
-            Launch Campaign
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 font-semibold text-lg transition w-full"
+            >
+              🎯 Launch Campaign
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
